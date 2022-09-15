@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="395.0" prefWidth="295.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.whatsup.ContactosController">
+   <children>
+      <Button layoutY="1.0" mnemonicParsing="false" onAction="#ckpilar" prefHeight="78.0" prefWidth="295.0" text="Pilar" />
+      <Button layoutY="79.0" mnemonicParsing="false" onAction="#cksanty" prefHeight="78.0" prefWidth="295.0" text="Santiago" />
+   </children>
+</AnchorPane>
