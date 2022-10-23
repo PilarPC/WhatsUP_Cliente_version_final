@@ -11,38 +11,43 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="408.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.whatsup.HelloController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="421.0" prefWidth="527.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.whatsup.HelloController">
    <children>
-      <ScrollPane layoutX="31.0" layoutY="66.0" prefHeight="233.0" prefWidth="294.0">
+      <ScrollPane layoutX="31.0" layoutY="66.0" prefHeight="233.0" prefWidth="477.0">
          <content>
-            <VBox fx:id="mensajes" prefHeight="232.0" prefWidth="278.0" />
+            <VBox fx:id="mensajes" prefHeight="232.0" prefWidth="460.0" />
          </content>
       </ScrollPane>
-      <TextField fx:id="textoTF" layoutX="31.0" layoutY="309.0" prefHeight="37.0" prefWidth="294.0" />
-      <GridPane layoutX="26.0" layoutY="357.0" prefWidth="308.0">
+      <TextField fx:id="textoTF" layoutX="36.0" layoutY="308.0" prefHeight="37.0" prefWidth="467.0" />
+      <GridPane layoutX="36.0" layoutY="355.0" prefHeight="43.0" prefWidth="467.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="btAsc" mnemonicParsing="false" onAction="#ckAsc" prefHeight="35.0" prefWidth="107.0" text="Ascimétrico" GridPane.columnIndex="2">
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
-            <Button fx:id="btPlano" mnemonicParsing="false" onAction="#ckPlano" prefHeight="30.0" prefWidth="107.0" text="Plano" />
-            <Button fx:id="btPlano1" mnemonicParsing="false" onAction="#ckPlano" prefHeight="30.0" prefWidth="107.0" text="Plano">
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
-            <Button fx:id="btsim" mnemonicParsing="false" onAction="#cksim" prefHeight="30.0" prefWidth="110.0" text="Simétrico" GridPane.columnIndex="1">
+            <Button fx:id="btPlano1" mnemonicParsing="false" onAction="#ckPlano" prefHeight="64.0" prefWidth="94.0" text="Plano">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
+            <Button fx:id="btsim" mnemonicParsing="false" onAction="#cksim" prefHeight="55.0" prefWidth="94.0" text="Simétrico" GridPane.columnIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btAsc" mnemonicParsing="false" onAction="#ckAsc" prefHeight="70.0" prefWidth="94.0" text="Ascimétrico" GridPane.columnIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#ckSobre" prefHeight="79.0" prefWidth="94.0" text="Sobre" GridPane.columnIndex="4" />
+            <Button mnemonicParsing="false" onAction="#ckFirma" prefHeight="93.0" prefWidth="94.0" text="Firmar" GridPane.columnIndex="3" />
          </children>
       </GridPane>
       <Label fx:id="nombre" layoutX="143.0" layoutY="17.0" prefHeight="30.0" prefWidth="129.0" />

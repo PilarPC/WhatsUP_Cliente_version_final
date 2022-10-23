@@ -10,10 +10,19 @@ public class Paquete implements Serializable {
     private String tipiM = "";
 
 
-
     private int puertoE;
     private int puertoR;
     private  String tiempo;
+
+    private String Firma;
+    private int llaveCifrada;
+
+
+
+    private int numeroDeCertificado;
+    private String rutaCertificadoReceptor;
+
+
 
     public Paquete(String mensaje, int puertoE, int getPuertoR) {
         this.mensaje = mensaje;
@@ -69,5 +78,38 @@ public class Paquete implements Serializable {
 
     public void setTipiM(String tipiM) {
         this.tipiM = tipiM;
+    }
+
+
+    public String getFirma() {
+        return Firma;
+    }
+
+    public void setFirma(String firma) {
+        Firma = firma;
+    }
+
+    public int getLlaveCifrada() {
+        return llaveCifrada;
+    }
+
+    public void setLlaveCifrada(int llaveCifrada) {
+        this.llaveCifrada = llaveCifrada;
+    }
+
+    public int getNumeroDeCertificado() {
+        return numeroDeCertificado;
+    }
+
+    public void setNumeroDeCertificado(int numeroDeCertificado) {
+        this.numeroDeCertificado = numeroDeCertificado;
+    }
+
+    public String getRutaCertificadoReceptor() {
+        return rutaCertificadoReceptor;
+    }
+
+    public void setRutaCertificadoReceptor(String rutaCertificadoReceptor) {
+        this.rutaCertificadoReceptor = rutaCertificadoReceptor;
     }
 }
