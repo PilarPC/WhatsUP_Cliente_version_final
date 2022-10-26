@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Paquete implements Serializable {
     private String mensaje;
-    private String  emisor = "Santiago";
+    private String  emisor = "Miguel";
     private String tipiM = "";
 
 
@@ -15,7 +15,7 @@ public class Paquete implements Serializable {
     private  String tiempo;
 
     private String Firma;
-    private int llaveCifrada;
+    private String llaveCifrada;
 
 
 
@@ -89,11 +89,11 @@ public class Paquete implements Serializable {
         Firma = firma;
     }
 
-    public int getLlaveCifrada() {
+    public String getLlaveCifrada() {
         return llaveCifrada;
     }
 
-    public void setLlaveCifrada(int llaveCifrada) {
+    public void setLlaveCifrada(String llaveCifrada) {
         this.llaveCifrada = llaveCifrada;
     }
 

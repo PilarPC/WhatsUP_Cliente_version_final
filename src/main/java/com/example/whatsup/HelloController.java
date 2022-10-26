@@ -18,8 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-
+import javax.swing.JOptionPane;
 import javax.swing.*;
+
 
 
 import java.io.*;
@@ -68,7 +69,7 @@ public class HelloController implements Runnable{
         try{
             Socket misocket = new Socket("127.0.0.1",8000);//IPv4, puerto
             //DataOutputStream flujo_salida = new DataOutputStream(misocket.getOutputStream());// convierte los datos a binario
-            ObjectOutputStream flujo_salida = new ObjectOutputStream(misocket.getOutputStream());
+            ObjectOutputStream flujo_salida = new ObjectOutputStream(misocket.getOutputStream()); // convierte mi calse a binario
             HBox Hbmandado = new HBox();
             Hbmandado.setAlignment(Pos.CENTER_RIGHT);
             paquete.setTiempo();
@@ -91,9 +92,9 @@ public class HelloController implements Runnable{
     @FXML
     void cksim(ActionEvent event) {
         try{
-            Socket misocket = new Socket("127.0.0.1",8000);//IPv4, puerto
+            Socket misocket = new Socket("127.0.0.1",8000);//IP, puerto
             //DataOutputStream flujo_salida = new DataOutputStream(misocket.getOutputStream());// convierte los datos a binario
-            ObjectOutputStream flujo_salida = new ObjectOutputStream(misocket.getOutputStream());
+            ObjectOutputStream flujo_salida = new ObjectOutputStream(misocket.getOutputStream());// convierte un objeto a binario
             HBox Hbmandado = new HBox();
             Hbmandado.setAlignment(Pos.CENTER_RIGHT);
             paquete.setTiempo();
@@ -146,7 +147,6 @@ public class HelloController implements Runnable{
         }
     }
 
-
     @FXML
     void ckFirma(ActionEvent event) {
         try{
@@ -161,14 +161,13 @@ public class HelloController implements Runnable{
             mensajes.getChildren().add(Hbmandado);
             paquete.setMensaje(textoTF.getText());
             escribir(paquete);
-            int llave = businessLogic.llavePrivada;
+            int llave = businessLogic.llavePrivada; //ingreso el valor de la llave privada del santiago
             paquete.setMensaje(textoTF.getText());
 
             //OPERACIÓN AL MENSAJE
             String hash = funcionHash(paquete.getMensaje());
-            System.out.println("(envio mensaje)Hash obtenido de la palabra " + paquete.getMensaje()+": " +hash );
+            System.out.println("Hash obtenido de la palabra" + paquete.getMensaje()+": " +hash );
             String simetrico = cesar(hash, llave);
-            System.out.println("(envio mensaje)el resultado de mi firma cifrada es  " +simetrico );
             paquete.setFirma(simetrico);
             paquete.setTipiM("firmado");
             paquete.setNumeroDeCertificado(businessLogic.numeroCertificado);
@@ -182,6 +181,7 @@ public class HelloController implements Runnable{
             e1.printStackTrace();
         }
     }
+
 
     @FXML
     void ckSobre(ActionEvent event) {
@@ -207,14 +207,14 @@ public class HelloController implements Runnable{
             paquete.setFirma(simetrico);
             //OBTENER NÚMERO ALEATORIO
             Random r = new Random();
-            int numeroAleatorio = r.nextInt(37)+1;
+            int numeroAleatorio = r.nextInt(36)+1;//37
             //cifro la firma y el mensaje
             paquete.setMensaje(cesar(paquete.getMensaje(), numeroAleatorio));
             paquete.setFirma(cesar(paquete.getFirma(), numeroAleatorio));
 
             //leer el segundo renglon de mi certificado para obtener la llave pública del receptor
             int llave2F =0;
-            String llave2 = JOptionPane.showInputDialog("Dame la ruta del certificado receptor");
+            String llave2 = JOptionPane.showInputDialog("Dame la ruta del certificado del receptor");
             paquete.setRutaCertificadoReceptor(llave2);
             File file = new File(llave2);
             FileReader fr = null;
@@ -244,10 +244,11 @@ public class HelloController implements Runnable{
             }
 
 
-            //cifro mi número aleatorio con la llave pribada del receptor
+            //cifro mi número aleatorio con la llave puclica del receptor
             String stringLlave = numeroAleatorio+"";
-            int llaveCifradaEntera = Integer.parseInt(cesar(stringLlave, llave2F));
+            String llaveCifradaEntera = cesar(stringLlave, llave2F);
             paquete.setLlaveCifrada(llaveCifradaEntera);
+            paquete.setNumeroDeCertificado(businessLogic.numeroCertificado);
 
 
             paquete.setTipiM("sobre");
@@ -261,6 +262,9 @@ public class HelloController implements Runnable{
             e1.printStackTrace();
         }
     }
+
+
+
     public  void Establecer(Paquete p){
         this.paquete = p; leer();
     }
@@ -274,8 +278,8 @@ public class HelloController implements Runnable{
     public void run(){
         try{
             servidor=new ServerSocket(9003);
-            //ahora que acepte cualquier conexion que venga del exterior con el metodo accept
 
+            //ahora que acepte cualquier conexion que venga del exterior con el metodo accept
             while(true){
                 Socket misocket=servidor.accept();//aceptara las conexiones que vengan del exterior
                 ObjectInputStream flujo_entrada=new ObjectInputStream(misocket.getInputStream());
@@ -291,7 +295,7 @@ public class HelloController implements Runnable{
                         System.out.println(data.getMensaje());
                         Platform.runLater(()->{
                             //mensajes.setText(mensaje);
-                            mensajes.getChildren().add(new Label(data.getMensaje()+" "+data.getTiempo()+" "+ data.getFirma()));
+                            mensajes.getChildren().add(new Label(data.getMensaje()+" "+data.getTiempo()+" "+data.getFirma()));
 
                         });
                         escribir(data);
@@ -305,9 +309,6 @@ public class HelloController implements Runnable{
         catch(IOException|ClassNotFoundException e){
             System.out.println(e);
         }
-
-
-
     }
     private Stage stage;
     private Scene scene;
@@ -350,6 +351,7 @@ public class HelloController implements Runnable{
         return decryptStr;
     }
 
+
     public void decifrar(Paquete mensaje){
         HBox descifrar = new HBox();
         Label mnsEncrip = new Label(mensaje.getMensaje());
@@ -376,7 +378,7 @@ public class HelloController implements Runnable{
                 } else if (mensaje.getTipiM().equals("firmado")) {
                     int llave = 0;
                     String NumCertificado = mensaje.getNumeroDeCertificado()+"";
-                    String rutaCertificadoEmisor =  "D:\\IJ\\proyectos\\cerificado"+NumCertificado+".txt";
+                    String rutaCertificadoEmisor =  "D:\\IJ\\proyectos\\cerificado"+NumCertificado+".cer";
                     File file = new File(rutaCertificadoEmisor);
                     FileReader fr = null;
                     try {
@@ -456,7 +458,7 @@ public class HelloController implements Runnable{
                     System.out.println("Hash obtenido de la palabra " + paquete.getMensaje()+": " + resumen );
                     String mensajeFinal = cesar(firmaDes, llave2);
                     mnsEncrip.setText(mensajeDes);
-                    JOptionPane.showMessageDialog(jFrame, "Se verifico la firma del sobre \n firma: " + mensajeFinal+"\n Numero de Certificado: "+ paquete.getNumeroDeCertificado());
+                    JOptionPane.showMessageDialog(jFrame, "Se verifico la firma del sobre \n firma: " + mensajeFinal+"\n Numero de Certificado: "+ mensaje.getNumeroDeCertificado());
 
 
                 } else{
@@ -469,6 +471,7 @@ public class HelloController implements Runnable{
         mensajes.getChildren().add(descifrar);
     }
 
+    //valor ASCII de cada caracter * la posición relativa de ese caracter
     public String funcionHash(String mensaje){
         String resumen = " ";
         int preResumen = 0;
@@ -478,6 +481,8 @@ public class HelloController implements Runnable{
         resumen = String.valueOf(preResumen);
         return resumen;
     }
+
+
 
     public void escribir(Paquete paquete)  throws IOException{
         // FileWriter escritura = new FileWriter("D:/IJ/proyectos/nuevo.txt");
@@ -501,11 +506,11 @@ public class HelloController implements Runnable{
             ObjectInputStream entrada=new ObjectInputStream(cargarDatos);
             baseDeDatos =(List<Paquete>)entrada.readObject();
             for(Paquete cargar: baseDeDatos){
+                //Si el mensaje es resivido y pertenece a la conversación, si el mensaje salio de aqui y pertenece a está conversación
                 if (paquete.getpPuertoR() == cargar.getPuertoE() | ((paquete.getPuertoE() == cargar.getPuertoE()) & (paquete.getpPuertoR() == cargar.getpPuertoR())) ){
                     System.out.println(cargar.getMensaje());
                     if(paquete.getPuertoE() == cargar.getPuertoE())
                     {
-
                         if(paquete.getPuertoE()==cargar.getPuertoE()){
                             HBox Hbmandado = new HBox();
                             Hbmandado.setAlignment(Pos.CENTER_RIGHT);
@@ -514,14 +519,13 @@ public class HelloController implements Runnable{
                             mensajes.getChildren().add(Hbmandado);
                         }
                         else{
-                            mensajes.getChildren().add(new Label(cargar.getMensaje()));
+                            mensajes.getChildren().add(new Label(cargar.getMensaje()+" "+cargar.getTiempo()));
                         }
 
                     }else if(paquete.getpPuertoR() == cargar.getPuertoE()){
-                        mensajes.getChildren().add(new Label(cargar.getMensaje()+" "+cargar.getTiempo()));
+                        mensajes.getChildren().add(new Label(cargar.getMensaje()));
                     }
                 }
-
             }
             entrada.close();
             cargarDatos.close();
