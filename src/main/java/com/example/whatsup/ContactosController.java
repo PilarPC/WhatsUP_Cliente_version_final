@@ -16,14 +16,14 @@ public class ContactosController {
     BusinessLogic businessLogic = BusinessLogic.getInstance();
 
     @FXML
-    void ckpilar(ActionEvent event) throws IOException {
+    void ckpilar(ActionEvent event) throws IOException { //mando mensaje a Pilar
         stage=(Stage)((Node)event.getSource()).getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         root=fxmlLoader.load();
         HelloController helloController=fxmlLoader.getController();
         helloController.userChat("");
         //instanciar paquet
-        helloController.Establecer(new Paquete("",9003,9002));
+        helloController.Establecer(new Paquete("",9003,9002, 10003));
 //stage=(Stage)((Node)event.getSource()).getScene().getWindow();
         scene=new Scene(root);
         stage.setScene(scene);
@@ -31,13 +31,13 @@ public class ContactosController {
     }
 
     @FXML
-    void cksanty(ActionEvent event) throws IOException {
+    void cksanty(ActionEvent event) throws IOException { //mando mensaje a Santiago
         stage=(Stage)((Node)event.getSource()).getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         root=fxmlLoader.load();
         HelloController helloController=fxmlLoader.getController();
         helloController.userChat("");
-        helloController.Establecer(new Paquete("",9003,9001));
+        helloController.Establecer(new Paquete("",9003,9001, 10001));
         //chatController.Establecer_Paquete(datos);
 //stage=(Stage)((Node)event.getSource()).getScene().getWindow();
         scene=new Scene(root);

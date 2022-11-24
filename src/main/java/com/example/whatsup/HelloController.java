@@ -171,7 +171,7 @@ public class HelloController implements Runnable{
             paquete.setFirma(simetrico);
             paquete.setTipiM("firmado");
             paquete.setNumeroDeCertificado(businessLogic.numeroCertificado);
-
+            paquete.setCodigoDeOperación('C');
             //MANDO MENSAJE
             flujo_salida.writeObject(paquete);
             flujo_salida.close();
@@ -213,43 +213,15 @@ public class HelloController implements Runnable{
             paquete.setFirma(cesar(paquete.getFirma(), numeroAleatorio));
 
             //leer el segundo renglon de mi certificado para obtener la llave pública del receptor
-            int llave2F =0;
-            String llave2 = JOptionPane.showInputDialog("Dame la ruta del certificado del receptor");
-            paquete.setRutaCertificadoReceptor(llave2);
-            File file = new File(llave2);
-            FileReader fr = null;
-            try {
-                fr = new FileReader(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            BufferedReader br = new BufferedReader(fr);   // creates a buffering character input stream
-            String line;
-            int lineCounter = 0;
-            while (true) {
-                try {
-                    if (!((line = br.readLine()) != null)) break;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (lineCounter == 1) {
-                    llave2F = Integer.parseInt(line);
-                }
-                lineCounter++;
-            }
-            try {
-                fr.close(); // closes the stream and release the resources
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            int llave2F = solicitudAR(paquete.getNumeroDeCertificadoR());
+            System.out.println("obtengo mi llabe publica del receptor con valor: " + llave2F);
 
-
-            //cifro mi número aleatorio con la llave puclica del receptor
+            //cifro mi número aleatorio con la llave publica del receptor
             String stringLlave = numeroAleatorio+"";
             String llaveCifradaEntera = cesar(stringLlave, llave2F);
             paquete.setLlaveCifrada(llaveCifradaEntera);
             paquete.setNumeroDeCertificado(businessLogic.numeroCertificado);
-
+            paquete.setCodigoDeOperación('C');
 
             paquete.setTipiM("sobre");
 
@@ -367,54 +339,37 @@ public class HelloController implements Runnable{
             btnD.setText("DesAsimetrico");
         }
 
+
         btnD.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
 
-
                 if (mensaje.getTipiM().equals("simetrico")){
                     int llaveSA = Integer.valueOf(JOptionPane.showInputDialog("llaave para desifrar: "));
                     mnsEncrip.setText(descencriptar(mensaje.getMensaje(), llaveSA));
-                } else if (mensaje.getTipiM().equals("firmado")) {
-                    int llave = 0;
-                    String NumCertificado = mensaje.getNumeroDeCertificado()+"";
-                    String rutaCertificadoEmisor =  "D:\\IJ\\proyectos\\cerificado"+NumCertificado+".cer";
-                    File file = new File(rutaCertificadoEmisor);
-                    FileReader fr = null;
-                    try {
-                        fr = new FileReader(file);
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                    BufferedReader br = new BufferedReader(fr);   // creates a buffering character input stream
-                    String line;
-                    int lineCounter = 0;
-                    while (true) {
-                        try {
-                            if (!((line = br.readLine()) != null)) break;
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if (lineCounter == 1) {
-                            llave = Integer.parseInt(line);
-                        }
-                        lineCounter++;
-                    }
-                    try {
-                        fr.close(); // closes the stream and release the resources
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    String resumenDscifrado = cesar(mensaje.getFirma(),llave);
+                }
+
+                else if (mensaje.getTipiM().equals("firmado")) {//    PARA LA VERIFICACIÓN DE LA FIRMA
+                    int llave;
+                    //buscar sertificado en mi AR
+                    llave = solicitudAR(mensaje.getNumeroDeCertificado()); // se obtiene la llave pública del certificado del cliente
+                    System.out.println("mi número de certificado que abri es: " + mensaje.getNumeroDeCertificado()+ " mi llave del certificado es: " +llave);
+                    //socket que escucha a AR
+
+                    String resumenDscifrado = cesar(mensaje.getFirma(), llave);
                     String resumen = funcionHash(mensaje.getMensaje());
                     System.out.println("Hash obtenido de la palabra " + paquete.getMensaje()+": " + resumen );
+                    System.out.println("el resumen decifrado es " + resumenDscifrado + " mi resumen es " + resumen);
                     if (resumenDscifrado.equals(resumen)){
                         JOptionPane.showMessageDialog(jFrame, "Se verifico la firma \n firma: " + mensaje.getFirma()+"\n Numero de Certificado: "+ mensaje.getNumeroDeCertificado());
                     }else{
                         JOptionPane.showMessageDialog(jFrame, "No se verifico la firma");
 
                     }
-                } else if (mensaje.getTipiM().equals("sobre")) {
+                }
+
+
+                else if (mensaje.getTipiM().equals("sobre")) {
                     int llavePriv = businessLogic.llavePrivada;
                     //desifro con mi llave privada la llave aleatórea del sobre de forma ascimétrica
                     String llaveCifrada = mensaje.getLlaveCifrada()+"";
@@ -425,35 +380,10 @@ public class HelloController implements Runnable{
                     String mensajeDes = descencriptar(mensaje.getMensaje(),llaveDes);
                     String firmaDes = descencriptar(mensaje.getFirma(),llaveDes);
                     //Con la llave pública del emisor verifico la firma
-                    int llave2 = 0;
-                    String rutaCertificadoEmisor =  mensaje.getRutaCertificadoReceptor();
-                    File file = new File(rutaCertificadoEmisor);
-                    FileReader fr = null;
-                    try {
-                        fr = new FileReader(file);
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                    BufferedReader br = new BufferedReader(fr);   // creates a buffering character input stream
-                    String line;
-                    int lineCounter = 0;
-                    while (true) {
-                        try {
-                            if (!((line = br.readLine()) != null)) break;
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if (lineCounter == 1) {
-                            llave2 = Integer.parseInt(line);
-                        }
-                        lineCounter++;
-                    }
-                    try {
-                        fr.close(); // closes the stream and release the resources
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    String resumenDscifrado = cesar(mensaje.getFirma(),llave2);
+                    int llave2 = solicitudAR(mensaje.getNumeroDeCertificado());
+                    System.out.println("necesito la llave publica del emisor con valor de: "+llave2);
+
+
                     String resumen = funcionHash(mensaje.getMensaje());
                     System.out.println("Hash obtenido de la palabra " + paquete.getMensaje()+": " + resumen );
                     String mensajeFinal = cesar(firmaDes, llave2);
@@ -469,6 +399,39 @@ public class HelloController implements Runnable{
         });
         descifrar.getChildren().addAll(mnsEncrip,btnD);
         mensajes.getChildren().add(descifrar);
+    }
+
+
+    //VERIFICAR CERTIFICADOS CON LA AGENCIA CERTIFICADORA
+    public int solicitudAR(int numeroCertificado){
+        int llave = 0;
+        try{
+            Socket misocket = new Socket("127.0.0.1",5001);//IPv4, puerto
+            ObjectOutputStream flujo_salida = new ObjectOutputStream(misocket.getOutputStream()); // convierte mi calse a binario
+            paquete.setNumeroDeCertificado(numeroCertificado);
+            paquete.setCodigoDeOperación('C');
+            flujo_salida.writeObject(paquete); // mando el núemero de certificado
+            flujo_salida.close();
+        }
+        catch(IOException e1){
+            e1.printStackTrace();
+        }
+        try{
+            ServerSocket escuchoAR = new ServerSocket(6001);
+            Socket misocket = escuchoAR.accept(); //aceptamos todas las conecciones del exterior, abrimos mi socket
+            ObjectInputStream paqueteEntreda = new ObjectInputStream(misocket.getInputStream());
+            Paquete paqueteRecibido = (Paquete) paqueteEntreda.readObject();
+
+            System.out.println("Se recibio la llave publica de AC: " + paqueteRecibido.getLlavePuclica());
+            llave = paqueteRecibido.getLlavePuclica();
+            misocket.close();
+            escuchoAR.close();
+
+        }
+        catch(IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return llave;
     }
 
     //valor ASCII de cada caracter * la posición relativa de ese caracter
@@ -489,7 +452,7 @@ public class HelloController implements Runnable{
         try{
             FileOutputStream escribe=new FileOutputStream("D:/IJ/proyectos/chatM.txt");
             ObjectOutputStream flujo_salida=new ObjectOutputStream(escribe);
-            Paquete paqueteEnviar = new Paquete(paquete.getMensaje(),paquete.getPuertoE(),paquete.getpPuertoR());
+            Paquete paqueteEnviar = new Paquete(paquete.getMensaje(),paquete.getPuertoE(),paquete.getpPuertoR(), paquete.getNumeroDeCertificadoR());
             paqueteEnviar.setNuevoTiempo(paquete.getTiempo());
             baseDeDatos.add(paqueteEnviar);
             flujo_salida.writeObject(baseDeDatos);

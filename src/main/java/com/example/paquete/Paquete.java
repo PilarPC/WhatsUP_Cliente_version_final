@@ -6,28 +6,33 @@ import java.time.format.DateTimeFormatter;
 
 public class Paquete implements Serializable {
     private String mensaje;
-    private String  emisor = "Miguel";
+    private String emisor = "Miguel";
     private String tipiM = "";
 
 
     private int puertoE;
     private int puertoR;
-    private  String tiempo;
+    private String tiempo;
 
     private String Firma;
     private String llaveCifrada;
 
+    private char codigoDeOperación;
 
 
     private int numeroDeCertificado;
     private String rutaCertificadoReceptor;
 
+    private int llavePuclica;
+
+    private int numeroDeCertificadoR;
 
 
-    public Paquete(String mensaje, int puertoE, int getPuertoR) {
+    public Paquete(String mensaje, int puertoE, int getPuertoR, int numeroDeCertificadoR) {
         this.mensaje = mensaje;
         this.puertoE = puertoE;
         this.puertoR = getPuertoR;
+        this.numeroDeCertificadoR = numeroDeCertificadoR;
     }
 
     public String getMensaje() {
@@ -43,7 +48,7 @@ public class Paquete implements Serializable {
     }
 
     public void setEmisor(String emisor) {
-        this.emisor= emisor;
+        this.emisor = emisor;
     }
 
     public int getPuertoE() {
@@ -69,9 +74,11 @@ public class Paquete implements Serializable {
     public void setTiempo() {
         this.tiempo = DateTimeFormatter.ofPattern("dd-MM-yyyy | HH:mm").format(LocalDateTime.now());
     }
-    public void setNuevoTiempo(String tiempo){
+
+    public void setNuevoTiempo(String tiempo) {
         this.tiempo = tiempo;
     }
+
     public String getTipiM() {
         return tipiM;
     }
@@ -111,5 +118,30 @@ public class Paquete implements Serializable {
 
     public void setRutaCertificadoReceptor(String rutaCertificadoReceptor) {
         this.rutaCertificadoReceptor = rutaCertificadoReceptor;
+    }
+
+    public int getLlavePuclica() {
+        return llavePuclica;
+    }
+
+    public void setLlavePuclica(int llavePuclica) {
+        this.llavePuclica = llavePuclica;
+    }
+
+    public int getNumeroDeCertificadoR() {
+        return numeroDeCertificadoR;
+    }
+
+    public void setNumeroDeCertificadoR(int numeroDeCertificadoR) {
+        this.numeroDeCertificadoR = numeroDeCertificadoR;
+    }
+
+
+    public char getCodigoDeOperación() {
+        return codigoDeOperación;
+    }
+
+    public void setCodigoDeOperación(char codigoDeOperación) {
+        this.codigoDeOperación = codigoDeOperación;
     }
 }
